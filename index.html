@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cybersecurity Awareness</title>
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background-color: black;
       color: white;
@@ -12,61 +17,61 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      height: 100dvh;
       font-family: Arial, sans-serif;
       font-size: 2em;
       text-align: center;
       user-select: none;
-      margin: 0;
+      -webkit-user-select: none;
       overflow: hidden;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       transition: background-color 1s ease;
     }
 
     #message {
-      opacity: 0;
-      transition: opacity 0.8s ease;
       padding: 20px;
       text-align: center;
       line-height: 1.4em;
     }
 
-    .visible {
-      opacity: 1 !important;
+    /* Whole screen flashes red/black, plus text flashes */
+    body.spam {
+      animation: bgflash 0.3s alternate 12;
     }
 
-    .flash {
-      animation: flash 0.25s alternate 10;
+    #message.flash {
+      animation: textflash 0.15s alternate 24;
     }
 
-    @keyframes flash {
-      from { color: red; }
-      to { color: white; }
+    @keyframes bgflash {
+      from { background-color: #b30000; }
+      to   { background-color: black; }
+    }
+
+    @keyframes textflash {
+      from { color: white; }
+      to   { color: yellow; }
     }
 
     /* Final green screen */
-    .final-screen {
-      background-color: 
-#00cc66 !important;
+    body.final-screen {
+      background-color: #00cc66 !important;
       color: black !important;
       font-size: 1.5em;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
       padding: 40px;
-      transition: background-color 1s ease;
+      box-sizing: border-box;
     }
 
     .final-message {
       max-width: 90%;
       white-space: pre-wrap;
-      opacity: 1 !important;
       color: black !important;
     }
   </style>
 </head>
 <body>
-  <div id="message"></div>
+  <div id="message">Tap the screen to continue</div>
 
   <script>
     let tapCount = 0;
@@ -75,31 +80,28 @@
     function handleTap() {
       tapCount++;
 
-      if (tapCount === 3) {
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      if (tapCount === 1) {
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+        document.body.classList.add("spam");
         message.textContent = "YOU ARE SPAMMED";
-        message.classList.add("visible", "flash");
-      } 
-      else if (tapCount === 4) {
+        message.classList.add("flash");
+      }
+      else if (tapCount === 2) {
+        document.body.classList.remove("spam");
         message.classList.remove("flash");
         message.textContent = "DON'T CLICK EVERYTHING, IF YOU DON'T KNOW THE SOURCE";
-        message.classList.add("visible");
-        message.style.color = "
-#00ff99";
+        message.style.color = "#00ff99";
       }
-      else if (tapCount === 5) {
-        // Switch background first
+      else if (tapCount === 3) {
         document.body.classList.add("final-screen");
-
-        // Replace the message and make sure it stays visible
+        message.removeAttribute("style");
         message.className = "final-message";
         message.textContent = "✅ This was a cybersecurity awareness demo.\n\nBe careful with unknown links, files, and QR codes.\n\nAlways verify the source before you click!";
       }
     }
 
-    // Works on both mobile and desktop
+    // One listener only: avoids double-counting on phones
     document.body.addEventListener('click', handleTap);
-    document.body.addEventListener('touchstart', handleTap);
   </script>
 </body>
 </html>
