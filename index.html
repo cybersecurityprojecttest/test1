@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cybersecurity Awareness</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      font-size: 2em;
+      text-align: center;
+      user-select: none;
+      margin: 0;
+      overflow: hidden;
+      transition: background-color 1s ease;
+    }
+
+    #message {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      padding: 20px;
+      text-align: center;
+      line-height: 1.4em;
+    }
+
+    .visible {
+      opacity: 1 !important;
+    }
+
+    .flash {
+      animation: flash 0.25s alternate 10;
+    }
+
+    @keyframes flash {
+      from { color: red; }
+      to { color: white; }
+    }
+
+    /* Final green screen */
+    .final-screen {
+      background-color: #00cc66 !important;
+      color: black !important;
+      font-size: 1.5em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 40px;
+      transition: background-color 1s ease;
+    }
+
+    .final-message {
+      max-width: 90%;
+      white-space: pre-wrap;
+      opacity: 1 !important;
+      color: black !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="message"></div>
+
+  <script>
+    let tapCount = 0;
+    const message = document.getElementById('message');
+
+    function handleTap() {
+      tapCount++;
+
+      if (tapCount === 3) {
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        message.textContent = "YOU ARE SPAMMED";
+        message.classList.add("visible", "flash");
+      } 
+      else if (tapCount === 4) {
+        message.classList.remove("flash");
+        message.textContent = "DON'T CLICK EVERYTHING, IF YOU DON'T KNOW THE SOURCE";
+        message.classList.add("visible");
+        message.style.color = "#00ff99";
+      }
+      else if (tapCount === 5) {
+        // Switch background first
+        document.body.classList.add("final-screen");
+
+        // Replace the message and make sure it stays visible
+        message.className = "final-message";
+        message.textContent = "✅ This was a cybersecurity awareness demo.\n\nBe careful with unknown links, files, and QR codes.\n\nAlways verify the source before you click!";
+      }
+    }
+
+    // Works on both mobile and desktop
+    document.body.addEventListener('click', handleTap);
+    document.body.addEventListener('touchstart', handleTap);
+  </script>
+</body>
+</html>
